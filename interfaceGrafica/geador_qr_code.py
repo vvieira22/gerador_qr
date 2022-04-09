@@ -1,5 +1,8 @@
+from ctypes import alignment
 import os
 from tkinter import *
+from tkinter import ttk
+from turtle import back
 from banco_sqlite import bancoDadosQR
 from tkinter import filedialog
 import tkinter
@@ -33,10 +36,13 @@ class Aplicacao(limparTela):
         self._imagem_salvar = self.importar_imagem("salvar.png")
         self._imagem_storage = self.importar_imagem("storage.png")
 
-    def configuracoes_abertura(self, janela, largura, altura, max_l, max_a, min_l, min_a, nome_janela, redimencional, movel):
+    def configuracoes_abertura(self, janela, largura, altura, max_l, max_a, min_l, min_a, nome_janela, redimencional, movel, background = None):
         janela.title(nome_janela) #texto barra superior
-        janela.configure(background="#f6f5ef")#cor background
-
+        
+        if(background==None):
+            janela.configure(background="#f6f5ef")#cor background
+        else:
+            janela.configure(background=background)#cor background
         #=============abrir centralizado=============
         w = largura
         h = altura
@@ -81,7 +87,7 @@ class Aplicacao(limparTela):
 
         #BOTAO CARREGAR BANCO
         self._botao_limpar = Button(self._frame_1, text="Banco  ", font=("verdana", 14, 'bold'), bd=5, image=self._imagem_storage,
-        compound="right", bg = "#cece5a", fg="black")
+        compound="right", bg = "#cece5a", fg="black", command=self.tela_qrs_do_banco)
         self._botao_limpar.place(relx=0.6, rely=0.95, relwidth=0.18, relheight=0.09 , anchor="center")
 
         #BOTAO LIMPAR   
@@ -100,7 +106,7 @@ class Aplicacao(limparTela):
 
     #FRAME 2 (SALVAR QR ONDE?)
     def tela_salvar_qr(self):
-        self._janela_salvar_qr = Toplevel(self._root)
+        self._janela_salvar_qr = Toplevel(self._root)        
         self.configuracoes_abertura(self._janela_salvar_qr, 400,250,400,350,400,350, "Como deseja salvar o QR?", False, False)
         self.widgets_frame2()
 
@@ -118,6 +124,49 @@ class Aplicacao(limparTela):
         self._botao_salvar_no_banco = Button(self._janela_salvar_qr, text=" Salvar no Banco    ", font=("verdana", 12, 'bold'), bd=5, image=self._imagem_salvar,
         compound="right", bg = "#34dfc9", fg="black", command=self.cadastrar_qr_no_banco)
         self._botao_salvar_no_banco.place(relx=0.5, rely=0.70, relwidth=0.75, relheight=0.27 , anchor="center")
+
+    #TELA MOSTRAR QRS DO BANCO
+    def tela_qrs_do_banco(self):
+        self._janela_banco_qr = Toplevel(self._root)
+        self.configuracoes_abertura(self._janela_banco_qr, 900, 450, 900, 450, 900, 450, "Lista de QRS Cadastrados", False, False, "#495866")
+        
+
+        #configuracoes de foco, ainda em teste
+        self._janela_banco_qr.grid()
+        self._janela_banco_qr.transient(self._root)
+        self._janela_banco_qr.focus_force()
+        self._janela_banco_qr.grab_set()
+
+        self._frame_teste = Frame(self._janela_banco_qr, bd=4, bg="#1f1f25", highlightthickness=7,
+        highlightbackground = "#2b4361", highlightcolor= "#2b4361")
+        self._frame_teste.place(relx=0.02, rely=0.02, relwidth=0.80, relheight=0.96)
+        self.widgets_tela_qrs_do_banco()
+
+
+    def widgets_tela_qrs_do_banco(self):
+        #estilização pra ficar maroto e legal!
+        style=ttk.Style(root)
+        style.theme_use('clam')
+
+        #tabela de qrs
+        self._lista_qrs = ttk.Treeview(self._frame_teste, height=3, columns=("coluna1, coluna3, coluna3"))
+        self._lista_qrs.heading("#0", text="")
+        self._lista_qrs.heading("#1", text="Código")
+        self._lista_qrs.heading("#2", text="Conteúdo")
+        self._lista_qrs.heading("#3", text="Data")
+
+        self._lista_qrs.column("#0", width=0)
+        self._lista_qrs.column("#1", width=30)
+        self._lista_qrs.column("#2", width=350)
+        self._lista_qrs.column("#3", width=70)
+        self._lista_qrs.place(relx=0.01, rely=0.00, relwidth=1, relheight= 1)
+
+        #barra de rolagem
+        self.barra_rolagem = Scrollbar(self._frame_teste)
+        self._lista_qrs.configure(yscroll = self.barra_rolagem.set)
+        self.barra_rolagem.place(relx=0.98, rely=0.001, relwidth=0.03, relheight=1)
+    
+
 
     def gerar_codigo_qr(self):
         lista_qrs = self._banco.retornar_lista_qrs()

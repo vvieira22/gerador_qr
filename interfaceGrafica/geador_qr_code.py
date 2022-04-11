@@ -66,22 +66,22 @@ class Aplicacao(Configuracoes):
     def cadastrar_qr_no_banco(self):
         valor_qr = self._janela_abertura._valor_qr.get()
         if(valor_qr == ""):
-            tkinter.messagebox.showerror(title="Erro!", message="QR vazio!!")
+            tkinter.messagebox.showerror(title="Erro!", message="QR vazio!!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
         else:
             codigo_qr = self.gerar_codigo_qr()
             valor_qr = self._janela_abertura._valor_qr.get()
             # hora_qr = self._hora_ultimo_qr()
             try:
                 self._banco.inserir_qr_no_banco(codigo_qr, valor_qr, "horamaisnafrente")
-                tkinter.messagebox.showerror(title="Sucesso!", message="Cadastro realizado com sucesso!")
+                tkinter.messagebox.showerror(title="Sucesso!", message="Cadastro realizado com sucesso!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
                 self.limpar_label(self._janela_abertura._valor_qr)
             except:
-                tkinter.messagebox.showerror(title="Ocorreu um erro", message="Erro ao cadastrar, tente novamente.")
+                tkinter.messagebox.showerror(title="Ocorreu um erro", message="Erro ao cadastrar, tente novamente.", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
         self._janela_onde_salvar_qr.limpar_janela()
     
     def chamar_outra_janela(self, nomeJanela):
         if(nomeJanela=="bancoQr"):
-            self._janela_banco_qrs.tela_qrs_do_banco(self._root)
+            self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco)
             self._janela_banco_qrs.inserir_lista_qrs_na_tabela(self._banco.retornar_lista_qrs())
         else:
             print("em andamento rs")

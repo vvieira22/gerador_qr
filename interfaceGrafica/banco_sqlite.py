@@ -1,10 +1,10 @@
+from ast import Raise
 import os
 import sqlite3
+from tkinter import E
 
 class bancoDadosQR():
     def __init__(self):
-        self._lista_cod_qr = []
-        self._lista_valor_qrs = []
         os.chdir(os.path.dirname(__file__))
         self.diretorio_bd = os.getcwd()+"\\"+"lista_qrs.db"
 
@@ -13,6 +13,7 @@ class bancoDadosQR():
         else:
             self.conectar_banco()
         self.criar_tabela() #vai tentar criar mesmo já tendo a tabela, para garantir que nunca falte
+        self._lista_qrs = self.retornar_lista_qrs()
 
     def conectar_banco(self):
         self.conn = sqlite3.connect("lista_qrs.db")
@@ -53,4 +54,23 @@ class bancoDadosQR():
         for registro in lista:
             lista_qrs.append(registro)
         self.desconectar_banco()
+        self._lista_qrs = lista_qrs
         return lista_qrs
+    
+    def excluir_qr(self, id):
+        try:
+            self.conectar_banco()
+            self.cursor.execute("""DELETE from qrs where codigo = ?""", (int(id),))
+            linhas_afetadas = self.cursor.rowcount
+            self.conn.commit()
+            self.desconectar_banco()
+
+            return True if linhas_afetadas > 0 else False
+
+        except sqlite3.Error as error:
+            Exception("error to delete reocord from a sqlite table", error)
+            self.desconectar_banco()
+
+            return False
+        '''exception nao esta funcionando, delete nao retorna 
+        nada se nao conseguir, precisa verificar pelas linhas afetadas.'''

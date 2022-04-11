@@ -1,4 +1,4 @@
-from tkinter import Button, Entry, Frame
+from tkinter import Button, Entry, Frame, Label
 from configuroes import Configuracoes
 
 #FRAME 1 (Janela de Abertura

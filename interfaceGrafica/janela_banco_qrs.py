@@ -31,13 +31,13 @@ class TelaBancoDeQrs():
         self._tabela_qrs = ttk.Treeview(self._frame_janela_banco_qrs, height=3, columns=("coluna1, coluna3, coluna3"))
         self._tabela_qrs.heading("#0", text="")
         self._tabela_qrs.heading("#1", text="Código")
-        self._tabela_qrs.heading("#2", text="Conteúdo")
-        self._tabela_qrs.heading("#3", text="Data")
+        self._tabela_qrs.heading("#2", text="Data")
+        self._tabela_qrs.heading("#3", text="Conteúdo")
 
         self._tabela_qrs.column("#0", width=0)
         self._tabela_qrs.column("#1", width=5)
-        self._tabela_qrs.column("#2", width=320)
-        self._tabela_qrs.column("#3", width=110)
+        self._tabela_qrs.column("#2", width=110)
+        self._tabela_qrs.column("#3", width=320)
         self._tabela_qrs.place(relx=0.01, rely=0.00, relwidth=1, relheight= 1)
 
         self._tabela_qrs.bind("<Double-1>", self.click_duplo_tabela)
@@ -72,7 +72,7 @@ class TelaBancoDeQrs():
 
         #BOTAO ATUALIZAR
         self._botao_atualizar = Button(self._janela_banco_qr, text="Atualizar  ", font=("verdana", 10, 'bold'), bd=5,
-        compound="right", bg = "#21b4ea", fg="black", command= print("excluido"))
+        compound="right", bg = "#21b4ea", fg="black", command= self.atualizar_qr_do_banco)
         self._botao_atualizar.place(relx = 0.91, rely = 0.70, relwidth = 0.18, relheight = 0.1, anchor = "center")
 
         #BOTAO EXCLUIR
@@ -97,8 +97,8 @@ class TelaBancoDeQrs():
         for n in self._tabela_qrs.selection():
             col1, col2, col3 = self._tabela_qrs.item(n, 'values')
             self._entry_codigo.config(text=col1)
-            self._entry_conteudo.insert(END, col2)
-        self._entry_data.insert(END, col3)
+            self._entry_data.insert(END, col2)
+            self._entry_conteudo.insert(END, col3)
 
     def excluir_qr_do_banco(self):
         try:
@@ -112,8 +112,33 @@ class TelaBancoDeQrs():
                         self.inserir_lista_qrs_na_tabela(tabela_atualizada)
                         return None
                     self.limpar_campos()
-                    tkinter.messagebox.showinfo(title="Um erro ocorreu!", message="Qr não removido!", parent=self._frame_janela_banco_qrs)
+                    tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Qr não removido!", parent=self._frame_janela_banco_qrs)
                     return None
         except:
             self.limpar_campos()
-            tkinter.messagebox.showinfo(title="QR não selecionado", message="Por Favor selecione um registro\ncom duplo clique.", parent=self._frame_janela_banco_qrs)
+            tkinter.messagebox.showerror(title="QR não selecionado", message="Por Favor selecione um registro\ncom duplo clique.", parent=self._frame_janela_banco_qrs)
+    
+    def atualizar_qr_do_banco(self):
+        try:
+            codigo = int(self._entry_codigo['text'])
+            for qr in self._banco_qr._lista_qrs:
+                if (int(qr[0]) == codigo):
+                    conteudo_novo = self._entry_conteudo.get()
+                    data_nova = self._entry_data.get()
+
+                    if(qr[1] == data_nova and qr[2] == conteudo_novo):
+                        tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Para realizar a alteração\n altere algo!", parent=self._frame_janela_banco_qrs)
+                        return None
+                    else:
+                        if (self._banco_qr.atualizar_qr(codigo, data_nova, conteudo_novo)):
+                            self.limpar_campos()
+                            tkinter.messagebox.showinfo(title="Sucesso!", message="Qr atualizado com sucesso!", parent=self._frame_janela_banco_qrs)
+                            tabela_atualizada = self._banco_qr.retornar_lista_qrs()
+                            self.inserir_lista_qrs_na_tabela(tabela_atualizada)
+                            return None
+                        self.limpar_campos()
+                        tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Qr não atualizado!", parent=self._frame_janela_banco_qrs)
+                        return None
+        except:
+            self.limpar_campos()
+            tkinter.messagebox.showerror(title="QR não selecionado", message="Por Favor selecione um registro\ncom duplo clique.", parent=self._frame_janela_banco_qrs)

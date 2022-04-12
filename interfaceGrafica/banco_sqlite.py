@@ -41,7 +41,7 @@ class bancoDadosQR():
 
         self.conectar_banco()
         self.cursor.execute(""" INSERT INTO qrs (codigo, data_geracao, conteudo_qr)
-            VALUES (?, ?, ?)""", (self.codigo, self.conteudo_qr, self.hora_qr))
+            VALUES (?, ?, ?)""", (self.codigo, self.hora_qr ,self.conteudo_qr))
         self.conn.commit()
         self.desconectar_banco()
 
@@ -60,17 +60,35 @@ class bancoDadosQR():
     def excluir_qr(self, id):
         try:
             self.conectar_banco()
+            
             self.cursor.execute("""DELETE from qrs where codigo = ?""", (int(id),))
             linhas_afetadas = self.cursor.rowcount
             self.conn.commit()
+           
             self.desconectar_banco()
 
             return True if linhas_afetadas > 0 else False
-
         except sqlite3.Error as error:
-            Exception("error to delete reocord from a sqlite table", error)
+            Exception("error to delete record from a sqlite table", error)
             self.desconectar_banco()
 
             return False
         '''exception nao esta funcionando, delete nao retorna 
         nada se nao conseguir, precisa verificar pelas linhas afetadas.'''
+    def atualizar_qr(self, id, data_nova, conteudo_novo):
+        try:
+            self.conectar_banco()
+
+            self.cursor.execute("""UPDATE qrs SET data_geracao = ?, conteudo_qr = ?
+            WHERE codigo = ? """, (data_nova, conteudo_novo, id))
+            linhas_afetadas = self.cursor.rowcount
+            self.conn.commit()
+
+            self.desconectar_banco()
+
+            return True if linhas_afetadas > 0 else False
+
+        except sqlite3.Error as error:
+            Exception("error to update record from a sqlite table", error)
+            self.desconectar_banco()
+            return False

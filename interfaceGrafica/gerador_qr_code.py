@@ -69,7 +69,7 @@ class Aplicacao(Configuracoes):
             tkinter.messagebox.showerror(title="Erro!", message="QR vazio!!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
         else:
             codigo_qr = self.gerar_codigo_qr()
-            valor_qr = self._janela_abertura._valor_qr.get()
+            # valor_qr = self._janela_abertura._valor_qr.get()
             # hora_qr = self._hora_ultimo_qr()
             try:
                 self._banco.inserir_qr_no_banco(codigo_qr, valor_qr, "horamaisnafrente")

@@ -10,9 +10,8 @@ class bancoDadosQR():
 
         if(os.path.exists(self.diretorio_bd)):
             print("banco, já criado")            
-        else:
-            self.conectar_banco()
-        self.criar_tabela() #vai tentar criar mesmo já tendo a tabela, para garantir que nunca falte
+        self.criar_tabela() #vai tentar criar mesmo já tendo a tabela, para garantir.
+
         self._lista_qrs = self.retornar_lista_qrs()
 
     def conectar_banco(self):

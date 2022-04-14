@@ -9,5 +9,5 @@ Objetivos:
 - [x] Atualizar registros no banco
 - [ ] Janela inicial
 - [ ] Gerar QR dentro da janela Inicial
-- [ ] Salvar QR como imagem externamente
+- [x] Salvar QR como imagem externamente
 

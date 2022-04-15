@@ -2,7 +2,7 @@ from cgitb import text
 from logging import root
 from tkinter import E, END, Button, Entry, Frame, Label, Scrollbar, Toplevel, ttk
 import tkinter
-from configuroes import Configuracoes
+from helpers import Configuracoes
 
 class TelaBancoDeQrs():
     def tela_qrs_do_banco(self, frame_mae, banco_qr):

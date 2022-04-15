@@ -1,4 +1,8 @@
 from tkinter import END
+from datetime import datetime
+from pytz import timezone
+
+#Tools and Helpers.
 
 class Configuracoes():
     def configuracoes_abertura(self, janela, largura, altura, max_l, max_a, min_l, min_a, nome_janela, redimencional, movel, background = None):
@@ -34,3 +38,14 @@ class Configuracoes():
 
     def limpar_label(self, label):
         label.delete(0, END)
+    
+    def pegar_data_e_hora(self):
+        #necessita do pacote pytz, é mais preciso e "adptável".
+        #ok, era pra ser rj, só dessa vez eu deixo sp =)
+        data_e_hora_atuais = datetime.now()
+        fuso_horario = timezone("America/Sao_Paulo")
+        data_e_hora_sao_paulo = data_e_hora_atuais.astimezone(fuso_horario)
+        
+        return data_e_hora_sao_paulo.strftime('%d/%m/%Y %H:%M:%S')
+
+   

@@ -1,5 +1,5 @@
 from tkinter import Button, Toplevel
-from configuroes import Configuracoes
+from helpers import Configuracoes
 
 class JanelaOndeSalvarQR():
     def tela_salvar_qr(self, janela_mae, imagem, cadastrar_qr_no_banco, salvar_qr_como_imagem = None):

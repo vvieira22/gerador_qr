@@ -1,7 +1,7 @@
 from tkinter import Button, Entry, Frame, Label
 from helpers import Configuracoes
 
-#FRAME 1 (Janela de Abertura
+#FRAME 1 (Janela de Abertura)
 class JanelaAbertura():
     def tela_inicial_qr(self, *args):
         self._frame_1 = Frame(args[0], bd=4, bg="#495866", highlightthickness=7,
@@ -42,3 +42,8 @@ class JanelaAbertura():
     def mudar_status_janela(self, status):
         for widget in self._frame_1.winfo_children():
             widget.configure(state = status)
+    
+    def limpar_janela(self):
+        self._frame_1.grab_release()
+        self._frame_1.destroy()
+        self._frame_1.update()

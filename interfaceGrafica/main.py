@@ -91,7 +91,7 @@ class Aplicacao(Configuracoes):
                 self._banco.inserir_qr_no_banco(codigo_qr, valor_qr, hora_qr)
                 tkinter.messagebox.showerror(title = "Sucesso!", message = "Cadastro realizado com sucesso!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
             except:
-                tkinter.messagebox.showerror(title = "Ocorreu um erro", message="Erro ao cadastrar, tente novamente.", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
+                    tkinter.messagebox.showerror(title = "Ocorreu um erro", message="Erro ao cadastrar, tente novamente.", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
         self._janela_onde_salvar_qr.limpar_janela()
     
     def salvar_qr_arquivo(self):
@@ -113,12 +113,12 @@ class Aplicacao(Configuracoes):
                 print(file)
             except Exception as e:
                 print(e)
-                
+        self._janela_onde_salvar_qr.limpar_janela()                
     def chamar_outra_janela(self, nomeJanela):
         if(nomeJanela=="bancoQr"):
             try:
                 self.mudar_status_widgets_main("disabled")
-                self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco)
+                self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco, self.carregar_qr_do_banco)
                 self._janela_banco_qrs.inserir_lista_qrs_na_tabela(self._banco.retornar_lista_qrs())
                 self._root.wait_window(self._janela_banco_qrs._janela_banco_qr)
             finally:
@@ -163,5 +163,16 @@ class Aplicacao(Configuracoes):
     
     def mudar_status_widgets_main(self, status):
         self._janela_abertura.mudar_status_janela(status)
+    
+    def carregar_qr_do_banco(self, conteudo):
+        try:
+            self.mudar_status_widgets_main("normal")
+            self._janela_abertura._valor_qr.delete(0, END)
+            self._janela_abertura._valor_qr.insert(0, conteudo)
+            self.mudar_status_widgets_main("disabled")
+            self.gerar_frame_qr()
+        except:
+            tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Qr carregado!", parent=self._root)
+
 root = Tk()
 Aplicacao(root)

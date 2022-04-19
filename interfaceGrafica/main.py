@@ -32,9 +32,14 @@ class Aplicacao(Configuracoes):
 
     def chamar_janela_onde_salvar(self):
         self._janela_onde_salvar_qr = JanelaOndeSalvarQR()
-        self._janela_onde_salvar_qr.tela_salvar_qr(self._root, self._imagem_salvar,
-        self.cadastrar_qr_no_banco)
-
+        try:
+            self.mudar_status_widgets_main("disabled")
+            self._janela_onde_salvar_qr.tela_salvar_qr(self._root, self._imagem_salvar,
+            self.cadastrar_qr_no_banco, self.salvar_qr_arquivo)
+            self._root.wait_window(self._janela_onde_salvar_qr._janela_salvar_qr)
+        finally:
+            self.mudar_status_widgets_main("normal")
+   
     def janelas_aplicacao(self):
         #JANELA ABERTURA
         self._janela_abertura = JanelaAbertura()
@@ -89,10 +94,35 @@ class Aplicacao(Configuracoes):
                 tkinter.messagebox.showerror(title = "Ocorreu um erro", message="Erro ao cadastrar, tente novamente.", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
         self._janela_onde_salvar_qr.limpar_janela()
     
+    def salvar_qr_arquivo(self):
+        valor_qr = self._janela_abertura._valor_qr.get()
+        hora_qr = self._hora_ultimo_qr_gerado
+
+        if(valor_qr == ""):
+            tkinter.messagebox.showerror(title="Erro!", message="QR vazio!!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
+        elif(hora_qr == ""):
+            tkinter.messagebox.showerror(title="Erro!", message="QR não gerado!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)    
+        else:
+            try:
+                data = [('png', '*.png')]
+                imagem = self._gerador_qr.retornar_qr_temp()
+                file = filedialog.asksaveasfile(mode="wb", filetypes=data, defaultextension=".png", initialfile = "gerador_qr")
+                print(file)
+                if(file):
+                    imagem.save(file)
+                print(file)
+            except Exception as e:
+                print(e)
+                
     def chamar_outra_janela(self, nomeJanela):
         if(nomeJanela=="bancoQr"):
-            self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco)
-            self._janela_banco_qrs.inserir_lista_qrs_na_tabela(self._banco.retornar_lista_qrs())
+            try:
+                self.mudar_status_widgets_main("disabled")
+                self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco)
+                self._janela_banco_qrs.inserir_lista_qrs_na_tabela(self._banco.retornar_lista_qrs())
+                self._root.wait_window(self._janela_banco_qrs._janela_banco_qr)
+            finally:
+                self.mudar_status_widgets_main("normal")
         else:
             print("em andamento rs")
 
@@ -130,6 +160,8 @@ class Aplicacao(Configuracoes):
 
         except ValueError as e:
             tkinter.messagebox.showerror(title="Um erro ocorreu!", message = e, parent = self._root)
-
+    
+    def mudar_status_widgets_main(self, status):
+        self._janela_abertura.mudar_status_janela(status)
 root = Tk()
 Aplicacao(root)

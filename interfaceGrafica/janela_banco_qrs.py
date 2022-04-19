@@ -10,12 +10,10 @@ class TelaBancoDeQrs():
         self._banco_qr = banco_qr
         self._janela_banco_qr = Toplevel(frame_mae)
         Configuracoes().configuracoes_abertura(self._janela_banco_qr, 900, 450, 900, 450, 900, 450, "Lista de QRS Cadastrados", False, False, "#495866")
-        
-        #configuracoes de foco, ainda em teste
-        self._janela_banco_qr.grid()
+
         self._janela_banco_qr.transient(frame_mae)
         self._janela_banco_qr.focus_force()
-        self._janela_banco_qr.grab_set()
+        
 
         self._frame_janela_banco_qrs = Frame(self._janela_banco_qr, bd=4, bg="#1f1f25", highlightthickness=7,
         highlightbackground = "#2b4361", highlightcolor= "#2b4361")

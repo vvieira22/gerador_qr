@@ -6,7 +6,7 @@ class JanelaAbertura():
     def tela_inicial_qr(self, *args):
         self._frame_1 = Frame(args[0], bd=4, bg="#495866", highlightthickness=7,
         highlightbackground = "black", highlightcolor= "black")
-        self.configs_tela_ini_qr = Configuracoes().configuracoes_abertura(args[0], 1000,800,1920,1080,1000,800,"Gerador de QR code", True, True)
+        self.configs_tela_ini_qr = Configuracoes().configuracoes_abertura(args[0], 1000,800,1920,1080,1000,800,"Gerador de QR code", True, False)
         self._frame_1.grid()
         self._frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.96)
         self.widgets_frame1(*args)
@@ -39,6 +39,6 @@ class JanelaAbertura():
         compound = "right", bg = "#df5434", fg = "black", command = args[3])
         self._botao_limpar.place(relx = 0.8, rely = 0.95, relwidth = 0.18, relheight = 0.09 , anchor = "center")
 
-        #pegar diretorio para salvar a imagem qr
-        # folder_path = filedialog.askdirectory()
-        # print(folder_path)
+    def mudar_status_janela(self, status):
+        for widget in self._frame_1.winfo_children():
+            widget.configure(state = status)

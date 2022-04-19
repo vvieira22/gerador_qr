@@ -49,3 +49,7 @@ class Configuracoes():
         return data_e_hora_sao_paulo.strftime('%d/%m/%Y %H:%M:%S')
 
    
+# https://stackoverflow.com/questions/60413086/lock-a-main-tkinter-window-in-python-and-keep-the-x-button-running
+# https://stackoverflow.com/questions/39689046/tkinter-only-allow-one-toplevel-window-instance
+
+#TODO: DESATIVAR TODAS OS WIDGETS QUANDO ABRIR A JANELA PARA EVITAR USAR O FOCO FORÇADO.

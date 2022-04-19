@@ -41,8 +41,10 @@ class QR():
         img.paste(logo, (xmin, ymin, xmax, ymax))
 
         img.save(self._imagepath + 'qr_temp.png')
+    
+    def retornar_qr_temp(self):
+        return Image.open(self._imagepath + "qr_temp.png")
 
     def excluir_qr_temporario(self):
         os.remove(self._imagepath + 'qr_temp.png')
-qr = QR()
-qr.gerar_qr_temporario("jj")
+

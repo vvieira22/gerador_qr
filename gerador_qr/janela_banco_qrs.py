@@ -6,7 +6,8 @@ import tkinter
 from helpers import Configuracoes
 
 class TelaBancoDeQrs():
-    def tela_qrs_do_banco(self, frame_mae, banco_qr, carregar_qr_do_banco):
+    def tela_qrs_do_banco(self, frame_mae, banco_qr, carregar_qr_do_banco, qr_carregado):
+        self._qr_carregado = qr_carregado
         self._frame_mae = frame_mae
         self._banco_qr = banco_qr
         self._carregar_qr_do_banco = carregar_qr_do_banco
@@ -105,23 +106,25 @@ class TelaBancoDeQrs():
             self._entry_conteudo.insert(END, col3)
         
     def excluir_qr_do_banco(self):
-        try:
-            codigo = int(self._entry_codigo['text'])
-            for qr in self._banco_qr._lista_qrs:
-                if (int(qr[0]) == codigo):
-                    if (self._banco_qr.excluir_qr(codigo)):
+        if(not self._qr_carregado):
+            try:
+                codigo = int(self._entry_codigo['text'])
+                for qr in self._banco_qr._lista_qrs:
+                    if (int(qr[0]) == codigo):
+                        if (self._banco_qr.excluir_qr(codigo)):
+                            self.limpar_campos()
+                            tkinter.messagebox.showinfo(title="Sucesso!", message="Qr removido com sucesso!", parent=self._frame_janela_banco_qrs)
+                            tabela_atualizada = self._banco_qr.retornar_lista_qrs()
+                            self.inserir_lista_qrs_na_tabela(tabela_atualizada)
+                            return None
                         self.limpar_campos()
-                        tkinter.messagebox.showinfo(title="Sucesso!", message="Qr removido com sucesso!", parent=self._frame_janela_banco_qrs)
-                        tabela_atualizada = self._banco_qr.retornar_lista_qrs()
-                        self.inserir_lista_qrs_na_tabela(tabela_atualizada)
+                        tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Qr não removido!", parent=self._frame_janela_banco_qrs)
                         return None
-                    self.limpar_campos()
-                    tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Qr não removido!", parent=self._frame_janela_banco_qrs)
-                    return None
-        except:
-            self.limpar_campos()
-            tkinter.messagebox.showerror(title="QR não selecionado", message="Por Favor selecione um registro\ncom duplo clique.", parent=self._frame_janela_banco_qrs)
-    
+            except:
+                self.limpar_campos()
+                tkinter.messagebox.showerror(title="QR não selecionado", message="Por Favor selecione um registro\ncom duplo clique.", parent=self._frame_janela_banco_qrs)
+        else:
+                tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Não pode existir\n QR carregado na memória!", parent=self._frame_janela_banco_qrs)
     def atualizar_qr_do_banco(self):
         try:
             codigo = int(self._entry_codigo['text'])
@@ -158,5 +161,6 @@ class TelaBancoDeQrs():
                     self._janela_banco_qr.grab_release()
                     self._janela_banco_qr.destroy()
                     self._janela_banco_qr.update()
+                    self._qr_carregado = True
         except:
             tkinter.messagebox.showerror(title="QR não selecionado", message="Por Favor selecione um registro\ncom duplo clique.", parent=self._frame_janela_banco_qrs)

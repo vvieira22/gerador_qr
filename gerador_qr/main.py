@@ -21,6 +21,7 @@ class Aplicacao(Configuracoes):
         self.configs_iniciais()
         
     def configs_iniciais(self):
+        self._qr_carregado = False
         self._hora_ultimo_qr_gerado = ""
         self._banco = bancoDadosQR()
         self._gerador_qr = QR()
@@ -51,8 +52,12 @@ class Aplicacao(Configuracoes):
         self._janela_banco_qrs = TelaBancoDeQrs()
     
     def limpar_qr_gerado(self):
-        self.limpar_label(self._janela_abertura._valor_qr)
-        self.lbl.destroy()
+        try:
+            self.limpar_label(self._janela_abertura._valor_qr)
+            self.lbl.destroy()
+            self._qr_carregado = False
+        except:
+            pass
 
     def carregar_imagens_logos(self):
         self._imagem_lixeira = self.importar_imagem("trash.png")
@@ -74,7 +79,7 @@ class Aplicacao(Configuracoes):
         
         if(valor_qr == ""):
             tkinter.messagebox.showerror(title="Erro!", message="QR vazio!!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
-        elif(hora_qr == ""):
+        elif(not self._qr_carregado):
             tkinter.messagebox.showerror(title="Erro!", message="QR não gerado!", parent = self._janela_onde_salvar_qr._janela_salvar_qr)        
         else:
             codigo_qr = self.gerar_codigo_qr()
@@ -112,13 +117,14 @@ class Aplicacao(Configuracoes):
         if(nomeJanela=="bancoQr"):
             try:
                 self.mudar_status_widgets_main("disabled")
-                self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco, self.carregar_qr_do_banco)
+                self._janela_banco_qrs.tela_qrs_do_banco(self._root, self._banco, self.carregar_qr_do_banco, self._qr_carregado)
                 self._janela_banco_qrs.inserir_lista_qrs_na_tabela(self._banco.retornar_lista_qrs())
                 self._root.wait_window(self._janela_banco_qrs._janela_banco_qr)
             finally:
+                self._qr_carregado = self._janela_banco_qrs._qr_carregado
                 self.mudar_status_widgets_main("normal")
         else:
-            print("em andamento rs")
+            print("....")
 
     def limpar_entry_qr(self):
         self.lbl.destroy()
@@ -151,7 +157,7 @@ class Aplicacao(Configuracoes):
             img = ImageTk.PhotoImage(Image.open(IMAGE_PATH).resize((WIDTH, HEIGHT)))
             self.lbl = Label(self._root, image = img)
             self.lbl.place(relx = 0.5, rely = 0.65, anchor = 's')
-
+            self._qr_carregado = True
         except ValueError as e:
             tkinter.messagebox.showerror(title="Um erro ocorreu!", message = e, parent = self._root)
     

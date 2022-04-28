@@ -8,41 +8,39 @@ from turtle import back
 from banco_sqlite import bancoDadosQR
 from tkinter import filedialog
 import tkinter
+from janela_abertura_real import JanelaAberturaReal
 from helpers import Configuracoes
-from janela_abertura import JanelaAbertura
-from janela_onde_salvar_qr import JanelaOndeSalvarQR
+from janela_onde_salvar import JanelaOndeSalvarQR
 from janela_banco_qrs import TelaBancoDeQrs
 from PIL import Image, ImageTk
 from gerador_qr import QR
 
 class Aplicacao(Configuracoes):
     def __init__(self, root):
-        self._root = root 
+        self._root = root
         self.configs_iniciais()
-        root.mainloop()
-
+        
     def configs_iniciais(self):
         self._hora_ultimo_qr_gerado = ""
         self._banco = bancoDadosQR()
         self._gerador_qr = QR()
         self._banco.retornar_lista_qrs()
-        self.carregar_imagem()
-        Configuracoes().configuracoes_abertura(self._root, 1000, 800, 1920, 1080, 1000, 800,"Gerador de QR code", True, True)
-        self.janelas_aplicacao()
+        self.carregar_imagens_logos()
+        self.carregar_janelas()
 
     def chamar_janela_onde_salvar(self):
         self._janela_onde_salvar_qr = JanelaOndeSalvarQR()
         try:
             self.mudar_status_widgets_main("disabled")
             self._janela_onde_salvar_qr.tela_salvar_qr(self._root, self._imagem_salvar,
-            self.cadastrar_qr_no_banco, self.salvar_qr_arquivo)
+            self.salvar_qr_no_banco, self.salvar_qr_arquivo)
             self._root.wait_window(self._janela_onde_salvar_qr._janela_salvar_qr)
         finally:
             self.mudar_status_widgets_main("normal")
    
-    def janelas_aplicacao(self):
+    def carregar_janelas(self):
         #JANELA ABERTURA
-        self._janela_abertura = JanelaAbertura()
+        self._janela_abertura = JanelaAberturaReal(self._root)
 
         parametros_janela_abertura = [self._root, self.chamar_janela_onde_salvar, 
         lambda : self.chamar_outra_janela("bancoQr"), lambda : self.limpar_qr_gerado(), 
@@ -56,14 +54,7 @@ class Aplicacao(Configuracoes):
         self.limpar_label(self._janela_abertura._valor_qr)
         self.lbl.destroy()
 
-# TODO: POSSIVEL PONTO DE MELHORIA, TA MUITO ESTRANHO, CARREGAR E DPS LER A IMAGEM DNV
-    def importar_imagem(self, caminho_imagem_com_formato):
-        scriptpath = os.path.abspath(__file__) # get the complete absolute path to this script
-        scriptdir = os.path.dirname(scriptpath) # strip away the file name
-        imagepath = os.path.join(scriptdir, "imagens/" +str(caminho_imagem_com_formato)) # join together the scriptdir and the name of the image  
-        return PhotoImage(file=imagepath) # make the image with the full path
-
-    def carregar_imagem(self):
+    def carregar_imagens_logos(self):
         self._imagem_lixeira = self.importar_imagem("trash.png")
         self._imagem_salvar = self.importar_imagem("salvar.png")
         self._imagem_storage = self.importar_imagem("storage.png")
@@ -77,7 +68,7 @@ class Aplicacao(Configuracoes):
             return 1
         return max(lista_indices)+1
     
-    def cadastrar_qr_no_banco(self):
+    def salvar_qr_no_banco(self):
         valor_qr = self._janela_abertura._valor_qr.get()
         hora_qr = self._hora_ultimo_qr_gerado
         
@@ -105,15 +96,18 @@ class Aplicacao(Configuracoes):
         else:
             try:
                 data = [('png', '*.png')]
-                imagem = self._gerador_qr.retornar_qr_temp()
-                file = filedialog.asksaveasfile(mode="wb", filetypes=data, defaultextension=".png", initialfile = "gerador_qr")
-                print(file)
+                imagem = self._gerador_qr.qr_temp
+                file = filedialog.asksaveasfile(mode="wb", filetypes=data, defaultextension=".png", initialfile = "gerador_qr")              
                 if(file):
                     imagem.save(file)
-                print(file)
+                if(file == None):
+                    tkinter.messagebox.showerror(title="Erro!", message="Salvamento Cancelado", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
+                else:
+                    tkinter.messagebox.showerror(title="Erro!", message="Salvamento realizado\ncom sucesso! :)", parent = self._janela_onde_salvar_qr._janela_salvar_qr)
             except Exception as e:
                 print(e)
         self._janela_onde_salvar_qr.limpar_janela()                
+    
     def chamar_outra_janela(self, nomeJanela):
         if(nomeJanela=="bancoQr"):
             try:
@@ -174,5 +168,7 @@ class Aplicacao(Configuracoes):
         except:
             tkinter.messagebox.showerror(title="Um erro ocorreu!", message="Qr carregado!", parent=self._root)
 
-root = Tk()
-Aplicacao(root)
+if __name__ == "__main__":
+    root = Tk()
+    Aplicacao(root)
+    root.mainloop() 

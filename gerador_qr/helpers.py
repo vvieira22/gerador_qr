@@ -1,10 +1,12 @@
-from tkinter import END
+import os
+from tkinter import END, PhotoImage
 from datetime import datetime
 from pytz import timezone
 
 #Tools and Helpers.
 
 class Configuracoes():
+    #configuracoes de abertura de frames/janelas!
     def configuracoes_abertura(self, janela, largura, altura, max_l, max_a, min_l, min_a, nome_janela, redimencional, movel, background = None):
         janela.title(nome_janela) #texto barra superior
         
@@ -47,9 +49,12 @@ class Configuracoes():
         data_e_hora_sao_paulo = data_e_hora_atuais.astimezone(fuso_horario)
         
         return data_e_hora_sao_paulo.strftime('%d/%m/%Y %H:%M:%S')
-
-   
-# https://stackoverflow.com/questions/60413086/lock-a-main-tkinter-window-in-python-and-keep-the-x-button-running
-# https://stackoverflow.com/questions/39689046/tkinter-only-allow-one-toplevel-window-instance
-
-#TODO: DESATIVAR TODAS OS WIDGETS QUANDO ABRIR A JANELA PARA EVITAR USAR O FOCO FORÇADO.
+    
+    # TODO: POSSIVEL PONTO DE MELHORIA, TA MUITO ESTRANHO, CARREGAR E DPS LER A IMAGEM DNV
+    def importar_imagem(self, diretorio):
+        scriptpath = os.path.abspath(__file__) # get the complete absolute path to this script
+        scriptdir = os.path.dirname(scriptpath) # strip away the file name
+        imagepath = os.path.join(scriptdir, "imagens/" +str(diretorio)) # join together the scriptdir and the name of the image  
+        
+        return PhotoImage(file=imagepath) # make the image with the full path
+    

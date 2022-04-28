@@ -2,9 +2,11 @@
 import os
 from PIL import Image
 import pyqrcode
+from banco_sqlite import bancoDadosQR
 
 class QR():
     def __init__(self):
+            pass
             scriptpath = os.path.abspath(__file__)
             scriptdir = os.path.dirname(scriptpath)
             self._imagepath = os.path.join(scriptdir, "imagens/")
@@ -17,12 +19,13 @@ class QR():
         except:
             raise "Error ao gerar qr."
         self.adicionar_logo()
+        self._img.save(self._imagepath + 'qr_temp.png')
 
     def adicionar_logo(self):
         # Now open that png image to put the logo
-        img = Image.open(self._imagepath + 'qr_temp.png')
-        img = img.convert("RGBA")
-        width, height = img.size
+        self._img = Image.open(self._imagepath + 'qr_temp.png')
+        self._img = self._img.convert("RGBA")
+        width, height = self._img.size
         
         # How big the logo we want to put in the qr code png
         logo_size = 70
@@ -38,13 +41,12 @@ class QR():
         logo = logo.resize((xmax - xmin, ymax - ymin))
 
         # put the logo in the qr code
-        img.paste(logo, (xmin, ymin, xmax, ymax))
-
-        img.save(self._imagepath + 'qr_temp.png')
+        self._img.paste(logo, (xmin, ymin, xmax, ymax))
     
-    def retornar_qr_temp(self):
-        return Image.open(self._imagepath + "qr_temp.png")
+    @property    
+    def qr_temp(self):
+        qr_temp = Image.open(self._imagepath + "qr_temp.png")
+        return qr_temp
 
     def excluir_qr_temporario(self):
         os.remove(self._imagepath + 'qr_temp.png')
-
